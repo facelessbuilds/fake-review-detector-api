@@ -192,13 +192,23 @@ function analyzeProduct(reviews, productMeta = {}) {
 
   const flaggedReviews = scored.filter(r => r.fakeScore >= 50).length;
 
-  // Adjusted rating: exclude reviews scored >= 65 (likely fake)
-  const legitimateReviews = reviews.filter((_, i) => scored[i].fakeScore < 65);
+  // Adjusted rating: weighted average that down-weights fake reviews.
+  // Each review contributes (1 - fakeScore/100) as its weight — a 0% fake review
+  // counts fully, a 100% fake review is excluded entirely. This produces a
+  // meaningful adjusted rating even when no single review crosses a hard threshold.
   const realRating = total > 0
     ? +(reviews.reduce((s, r) => s + (r.rating || 0), 0) / total).toFixed(1)
     : null;
-  const adjustedRating = legitimateReviews.length > 0
-    ? +(legitimateReviews.reduce((s, r) => s + (r.rating || 0), 0) / legitimateReviews.length).toFixed(1)
+
+  let weightedSum = 0;
+  let weightTotal = 0;
+  reviews.forEach((r, i) => {
+    const weight = Math.max(0, 1 - scored[i].fakeScore / 100);
+    weightedSum += (r.rating || 0) * weight;
+    weightTotal += weight;
+  });
+  const adjustedRating = weightTotal > 0
+    ? +(weightedSum / weightTotal).toFixed(1)
     : realRating;
 
   let verdict;
