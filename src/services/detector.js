@@ -147,7 +147,10 @@ function analyzeProduct(reviews, productMeta = {}) {
 
   const scored = reviews.map(r => {
     const key = r.reviewerId || r.reviewer || 'anon';
-    return scoreReview(r, byReviewer[key]);
+    const result = scoreReview(r, byReviewer[key]);
+    // Pass text through so the extension can render review snippets
+    result.text = r.text || null;
+    return result;
   });
 
   // ── Product-level signals ─────────────────────────────────────────────────

@@ -12,7 +12,8 @@ const { rateLimitAnalyze } = require('../middleware/rateLimit');
  * Body: { reviews: [...], productId: string, source: string, productMeta?: {} }
  */
 router.post('/', optionalAuth, rateLimitAnalyze, async (req, res) => {
-  const { reviews, productId, source, productMeta } = req.body;
+  const { reviews, productId, source, productMeta, productInfo } = req.body;
+  const meta = productMeta || productInfo || {};
 
   if (!reviews || !Array.isArray(reviews) || reviews.length === 0) {
     return res.status(400).json({ error: 'reviews must be a non-empty array' });
@@ -28,7 +29,7 @@ router.post('/', optionalAuth, rateLimitAnalyze, async (req, res) => {
   const reviewsToAnalyze = reviews.slice(0, MAX_REVIEWS);
 
   try {
-    const result = analyzeProduct(reviewsToAnalyze, productMeta || {});
+    const result = analyzeProduct(reviewsToAnalyze, meta);
 
     // Log usage asynchronously (don't block response)
     const userId = req.user?.id || null;
@@ -45,11 +46,15 @@ router.post('/', optionalAuth, rateLimitAnalyze, async (req, res) => {
       if (error) console.error('[analyze] Failed to log usage:', error.message);
     });
 
+    // Wrap in { product, reviews } shape that the extension's renderResults expects.
+    // result.reviews = per-review scored array; everything else is product-level.
+    const { reviews: scoredReviews, ...productSummary } = result;
     return res.json({
       success: true,
       source: source || 'generic',
       productId: productId || null,
-      ...result,
+      product: productSummary,
+      reviews: scoredReviews,
     });
   } catch (err) {
     console.error('[analyze] Detection error:', err);
