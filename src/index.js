@@ -84,9 +84,8 @@ app.get('/privacy', (req, res) => {
 
   <h2>5. Third-Party Services</h2>
   <ul>
-    <li><strong>OpenAI:</strong> Review text is sent to OpenAI's API for analysis. See <a href="https://openai.com/policies/privacy-policy" target="_blank" rel="noopener">OpenAI's Privacy Policy</a>.</li>
+    <li><strong>Anthropic:</strong> Review text is sent to Anthropic's API for analysis. See <a href="https://www.anthropic.com/privacy" target="_blank" rel="noopener">Anthropic's Privacy Policy</a>.</li>
     <li><strong>Stripe:</strong> Payment processing for paid plans. See <a href="https://stripe.com/privacy" target="_blank" rel="noopener">Stripe's Privacy Policy</a>.</li>
-    <li><strong>Supabase:</strong> Used for account authentication and subscription management. See <a href="https://supabase.com/privacy" target="_blank" rel="noopener">Supabase's Privacy Policy</a>.</li>
   </ul>
 
   <h2>6. Data Retention</h2>
