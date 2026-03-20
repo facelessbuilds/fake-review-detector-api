@@ -11,7 +11,7 @@ const {
 const supabase = require('../services/supabaseClient');
 const { requireAuth } = require('../middleware/authMiddleware');
 
-const FRONTEND_URL = process.env.FRONTEND_URL || 'https://fakereviewdetector.io';
+const FRONTEND_URL = process.env.FRONTEND_URL || 'https://api-production-d1f7.up.railway.app';
 
 const PRICE_MAP = {
   pro: process.env.STRIPE_PRO_PRICE_ID,

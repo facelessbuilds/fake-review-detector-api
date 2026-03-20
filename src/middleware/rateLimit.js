@@ -45,7 +45,7 @@ async function rateLimitAnalyze(req, res, next) {
       return res.status(429).json({
         error: 'Daily scan limit reached',
         limit,
-        upgrade: 'https://fakereviewdetector.io/#pricing',
+        upgrade: 'https://api-production-d1f7.up.railway.app/#pricing',
       });
     }
 
